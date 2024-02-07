@@ -1,0 +1,14 @@
+{	
+	"texture-faces": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none"
+],
+	
+    "breakable": true,
+	"rotation": "pane",
+	"model": "block",
+}   
