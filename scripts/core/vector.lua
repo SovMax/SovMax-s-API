@@ -28,7 +28,7 @@ function Vector.subtract_vectors(array_vectors)
     return result
 end
 
-function Vector.get_vector_dep_state(pos_vector3, func)
+function Vector.get_vector_dir_state(pos_vector3, func)
     local x, y, z = func(pos_vector3[1], pos_vector3[2], pos_vector3[3])
     return ({ x, y, z })
 end

@@ -38,19 +38,13 @@ function Block:get_default_values(input_pos, input_state, input_func, input_arra
     local x, y, z = Vector.get_position(input_pos)
     local function default_func() print("Test func") end
 
-    local state = Tool.Block.get_value(input_state, get_block_states(x, y, z))
-    local func = Tool.Block.get_value(input_func, default_func)
-    local array = Tool.Block.get_value(input_array, Block.all_blocks)
+    local state = Tool.get_value(input_state, get_block_states(x, y, z))
+    local func = Tool.get_value(input_func, default_func)
+    local array = Tool.get_value(input_array, Block.all_blocks)
 
     return state, func, array
 end
 
 function Block:print_block_info()
-    local x, y, z = Vector.get_position(self.position)
-    print(string.format("Position: %d %d %d", x, y, z))
-    print(string.format("State: %d", self.state))
-    print(string.format("Id: %d", self.id))
-    print("Array:", self.array)
-    print(string.format("Index: %d", self.index))
-    print("\n")
+    Priter.print_block_info(self)
 end
