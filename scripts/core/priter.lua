@@ -14,3 +14,13 @@ function Priter.array(array)
     end
     print("\n")
 end
+
+function Priter.print_block_info(block)
+    local x, y, z = Vector.get_position(block.position)
+    print(string.format("Position: %d %d %d", x, y, z))
+    print(string.format("State: %d", block.state))
+    print(string.format("Id: %d", block.id))
+    print("Array:", block.array)
+    print(string.format("Index: %d", block.index))
+    print("\n")
+end
