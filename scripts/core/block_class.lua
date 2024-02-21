@@ -1,50 +1,173 @@
-load_script("sovmax_api:scripts/core/tool_class.lua", true)
+---@diagnostic disable: undefined-global
+Vector3 = load_script("sovmax_api:scripts/core/vector3.lua", true)
+Box = load_script("sovmax_api:scripts/core/box_class.lua", true)
+All_classes = load_script("sovmax_api:scripts/core/all_classes.lua", true)
 
+Block = {}
 
-Block = { position = { nil, nil, nil }, id = nil, state = nil, func = nil, array = nil, index = nil }
+local block_mt = { __type = "Block" }
+setmetatable(Block,
+    {
+        __call = function(self, key, part_of, position, id, state, is_solid, is_replace)
+            local new_block = {}
+            new_block.__type = block_mt.__type
 
-Block.all_blocks = {}
+            new_block.position = position
+            new_block.id = id
+            new_block.state = state
+            new_block.is_solid = is_solid
+            new_block.is_replace = is_replace
 
-function Block:new(position, str_id, state, func, array)
-    local res_state, res_func, res_array = self:get_default_values(position, state, func, array)
-    local new_block = {
-        position = position,
-        id = block_index(str_id),
-        state = res_state,
-        func = res_func,
-        array = res_array,
-        index = #res_array + 1
+            part_of[key] = setmetatable(new_block, block_mt)
+            table.insert(part_of.all_keys, key)
+            return part_of[key]
+        end
     }
-    self.__index = self
-    local object_block = setmetatable(new_block, self)
-    table.insert(res_array, object_block)
-    Tool.Block.reindex_blocks(res_array)
-    return object_block
+)
+
+block_mt.__index = Block
+
+block_mt.__tostring = function(self)
+    return "Position:" .. self.position:tostring() .. "\n"
+        .. "Id:" .. self.id .. "\n"
+        .. "State:" .. self.state .. "\n"
+        .. "Is Solid:" .. tostring(self.is_solid) .. "\n"
+        .. "Is Replace:" .. tostring(self.is_replace) .. "\n"
 end
 
-function Block:self_del()
-    Tool.Block.del_block(self, self.array)
+function Block:paste()
+    local x, y, z = self.position.x, self.position.y, self.position.z
+
+    set_block(x, y, z, self.id, self.state)
 end
 
-function Block:self_paste()
-    Tool.Block.paste_block(self)
+function Block:set(id, state)
+    set_block(x, y, z, id, state)
 end
 
-function Block:self_is_replaceable()
-    return Tool.Block.is_replaceable(self)
+--Дописать
+function Block:remove(part_of)
+    table.remove(part_of.all_keys, i)
+    part_of[self.key] = nil
 end
 
-function Block:get_default_values(input_pos, input_state, input_func, input_array)
-    local x, y, z = Vector.get_position(input_pos)
-    local function default_func() print("Test func") end
+return Block
 
-    local state = Tool.get_value(input_state, get_block_states(x, y, z))
-    local func = Tool.get_value(input_func, default_func)
-    local array = Tool.get_value(input_array, Block.all_blocks)
 
-    return state, func, array
-end
 
-function Block:print_block_info()
-    Priter.print_block_info(self)
-end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Block = {}
+
+-- local block_mt = { __type = "Block" }
+-- setmetatable(Block,
+--     {
+--         __call = function(self, position, id, state)
+--             local new_block = {}
+--             table.insert(All_classes, new_block)
+
+--             new_block.position = position
+--             new_block.id = type(id) == "number" and id or block_index(id)
+--             new_block.state = state or 0
+--             new_block.array_name = "All_classes"
+--             new_block.index = #array
+
+--             return setmetatable(new_block, block_mt)
+--         end
+--     }
+-- )
+-- block_mt.__index = Block
+
+-- block_mt.__tostring = function(self)
+--     return "Position: " .. self.position:tostring() .. "\n"
+--         .. "Id: " .. self.id .. "\n"
+--         .. "State: " .. self.state .. "\n"
+--         .. "index: " .. self.index .. "\n"
+-- end
+
+-- function Block:set(id, state)
+--     id, state = id or 0, state or 0
+--     set_block(self.position.x, self.position.y, self.position.z, id, state)
+-- end
+
+-- function Block:paste(bool)
+--     bool = bool == nil and true or bool
+--     if bool == true then
+--         self:set(self.id, self.state)
+--     end
+-- end
+
+-- function Block:remove()
+--     table.remove(self.array, self.index)
+--     Block:reindex_blocks(self.array)
+-- end
+
+-- function Block:insert(array)
+--     array = array or Block.all_blocks
+--     self.array = array
+--     table.insert(array, self)
+--     Block:reindex_blocks(self.array)
+-- end
+
+-- function Block:del()
+--     self:set()
+--     self:remove()
+-- end
+
+-- function Block:move_to(array)
+--     self:remove()
+--     self:insert(array)
+-- end
+
+-- function Block:get_block(vector, array)
+--     array = array or Block.all_blocks
+--     for i = 1, #array do
+--         if array[i].position == vector then
+--             return array[i]
+--         end
+
+--         if array[i].index == vector then
+--             return array[i]
+--         end
+--     end
+-- end
+
+-- function Block:is_replaceable_at()
+--     local x, y, z = self.position.x, self.position.y, self.position.z
+--     if is_replaceable_at(x, y, z) == true then
+--         return true
+--     end
+--     return false
+-- end
+
+-- function Block:reindex_blocks(array)
+--     for i = 1, #array do
+--         array[i].index = i
+--     end
+-- end
+
+-- return Block
